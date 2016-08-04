@@ -1,0 +1,142 @@
+{% extends "app/layout.html" %}
+
+{% block content %}
+<style>
+    .metalink{
+        color:#ffd800;
+        font:8px;
+    }
+    #postrow{
+        background-color:antiquewhite;
+    }
+    .modal-title{
+        font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+        font-weight:bolder;
+        font-size:30px;
+
+    }
+    #modal_img{
+        padding-bottom:20px;
+        
+
+
+    }
+</style>
+<script src="../../static/app/scripts/jquery-1.10.2.js"></script>
+<script src="../../static/app/scripts/bootstrap.js"></script>
+<script>
+    var w = 0
+    var h=0
+    var ajax_data=''
+    $(document).on('click', '.postrow', function (e) {
+       
+        e.preventDefault()
+        $('.modal-body').html('')
+        $('.modal-title').html('')
+        console.log('About to fire ajax !!!!!!!!!!!!!')
+        $.ajax({
+            url: e.currentTarget.href,
+            success: function (data) {
+                //console.log('success ', this.url)
+                //console.log(data.full_story)
+                 
+                ajax_data=data
+                $('.modal-body').html('<img src="" id="modal_img"/>').append(data.full_story)
+                
+                $('.modal-title').html(data.heading)
+
+                
+            },
+            error: function (data) {
+                console.log('error')
+
+            },
+        });
+       
+        $('#myModal').modal('show')
+       
+
+       
+    });
+    $(function () {
+        $('#myModal').on('shown.bs.modal', function (e) {
+            w = $('.modal-body').width() 
+            h = $('.modal-body').height()
+
+
+            console.log('ssssssssssssyyyy ', w)
+            $('#modal_img').attr({ 'width': w + 'px' })
+            $('#modal_img').attr({ 'height': w-100 + 'px' })
+            $('#modal_img').attr({ 'src': ajax_data.img_src })
+            //$('#modal_img').attr({ 'padding-bottom':  '20px' })
+            //$('#modal_div').css({ 'width': w + 'px' })
+            //$('#modal_div').css({ 'height': w-50 + 'px' })
+            //$('#modal_div').css({ 'background-image': 'url(' + ajax_data.img_src + ')' })
+            //$('#modal_div').css({ 'background-repeat':'no-repeat' })
+        })
+
+    })
+
+
+</script>
+
+
+<!-- Modal -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">Detail News</h4>
+      </div>
+      <div class="modal-body">
+      
+      </div>
+      <div class="modal-footer" style="">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+       
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+<div class="jumbotron">
+    <h1>Django</h1>
+    <p class="lead">Django is a free web framework for building great Web sites and Web applications using HTML, CSS and JavaScript.</p>
+    <p><a href="https://www.djangoproject.com/" class="btn btn-primary btn-large">Learn more &raquo;</a></p>
+</div>
+
+
+{% for post in posts%}
+<div   class="row" >
+    <div class="col-md-2"></div>
+    <div  class="col-md-8">
+
+        <a class="postrow"  href="/apiposts/{{post.post_id}}/">{{post.heading}}</a>
+        <img src="{{post.img_src}}" width="100" height="80"  style="float:left; padding:10px;" />
+        <p>
+            {{post.summary|safe}}
+        </p>
+        
+
+    </div>
+
+
+
+    <p></p>
+</div>
+<div class="row">
+    <div   class="col-sm-push-8 col-md-8 col-md-push-7 ">
+        <a href=""  class="metalink">{{post.site}}</a>   {{post.post_date}}
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-8 col-md-push-2">
+        <hr />
+    </div>
+</div>
+{%endfor%}
+
+{% endblock %}
